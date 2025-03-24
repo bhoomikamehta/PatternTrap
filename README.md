@@ -24,4 +24,4 @@ Tech Stack: Web-based using JavaScript, HTML/CSS, React.js, Node.js, etc. TBD
 
 High-Level Gamflow:
 
-Logo: ![Alt](/Pattern_Trap_HL_Gameflow.png "High-Level Gamflow")
+![Alt](/Pattern_Trap_HL_Gameflow.png "High-Level Gamflow")

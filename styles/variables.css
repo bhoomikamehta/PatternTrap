@@ -1,0 +1,13 @@
+:root {
+  /*  colors*/
+  --primary-color: #45a1e4;
+  --secondary-color: #166aa7;
+  --dull-color: #909faa;
+  --light-gray: #666;
+  --background-fill-color: #fff;
+  --background-empty-color: #f9f9f9;
+  --trim-color: #faeaea;
+
+  /*spacing*/
+  --default-space: 2rem;
+}

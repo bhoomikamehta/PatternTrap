@@ -1,0 +1,111 @@
+
+.site-header,
+.site-footer {
+  padding: 1rem var(--default-space);
+  border-color: var(--trim-color);
+  z-index: 1000;
+  background-color: var(--background-fill-color);
+}
+
+.site-footer {
+  border-top-width: 1px;
+  bottom: 0;
+}
+
+.site-header {
+  border-bottom-widht: 1px;
+  top: 0;  
+}
+
+.site-header span,
+.site-footer span {
+  color: var(--light-gray);
+}
+
+.site-header .container,
+.site-footer .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  padding: 0;
+}
+
+.logo h1 {
+  color: var(--primary-color);
+  margin: 0;
+}
+.logo #logo-letters {
+  font-family: serif;
+  font-size: 2.5rem;
+}
+.logo i {
+  font-size: 0.8rem;
+  color: var(--light-gray);
+  font-weight: 100;
+}
+
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.main-nav a {
+  text-decoration: none;
+  color: var(--secondary-color);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.main-nav a:hover {
+  color: var(--primary-color);
+}
+
+
+
+#point-banner {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.point-message {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  margin-bottom: 0.5rem;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  display: inline-block;
+}
+
+.point-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.point-message.positive {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.point-message.negative {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.point-message.neutral {
+  background-color: #ccc;
+  color: #333;
+}

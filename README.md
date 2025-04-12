@@ -26,7 +26,7 @@ High-Level Gamflow:
 
 ![Alt](/Pattern_Trap_HL_Gameflow.png "High-Level Gamflow")
 
-Dev Notes
+# Dev Notes
 Open a terminal and navigate to the `/PatternTrap` directory then run `python3 -m http.server`
 Open `localhost:8000` in a browser to view
 Duplicate the `/template.html` file to quick start a new page

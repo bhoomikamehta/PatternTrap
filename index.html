@@ -3,16 +3,16 @@
 <html>
   <head>
     <title>Template</title>
-    <link rel="stylesheet" href="/styles/variables.css" />
-    <link rel="stylesheet" href="/styles/main.css" />
-    <link rel="stylesheet" href="/styles/header-footer.css" />
-    <script src="/scripts/storage.js"></script>
-    <script src="/scripts/page1.js"></script>
+    <link rel="stylesheet" href="./styles/variables.css" />
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/header-footer.css" />
+    <script src="./scripts/storage.js"></script>
+    <script src="./scripts/page1.js"></script>
     <script>
-      fetch("/components/header.html")
+      fetch("./components/header.html")
         .then((res) => res.text())
         .then((html) => (document.getElementById("header").innerHTML = html));
-      fetch("/components/footer.html")
+      fetch("./components/footer.html")
         .then((res) => res.text())
         .then((html) => (document.getElementById("footer").innerHTML = html));
       let onboardingData = getOnboardingData();
@@ -45,7 +45,7 @@
 
           <div id='consent-box'>
             <label><input id='consent' type="checkbox" name="consent" checked>  I acknowledge and consent to the collection and use of my data for research and analytical purposes in accordance with the study's privacy policy.</label>
-            <br/><span class='sneaky'>Submitting in 5</span>
+            <br/><span class='sneaky'>Submitting in 10</span>
           </div>
 
           <!-- <h2>1. Entering the Platform</h2>          
@@ -100,7 +100,7 @@
         consentBox.style.top = `${newY}px`;
       });
       const contentBoxSpan = consentBox.querySelector('span');
-      let countdown = 5;
+      let countdown = 10;
       const interval = setInterval(() => {
         countdown--;
         contentBoxSpan.textContent = `Submitting in ${countdown}`;

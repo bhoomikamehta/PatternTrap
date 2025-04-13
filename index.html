@@ -118,19 +118,15 @@
     })
 
       function logConsent(consented){
-        let option = consented ? 'consented' : 'not consented'
-        let prevLog = onboardingData.log || []
+        let value = consented ? 'opt_in' : 'opt_out'
         let score = consented ? -1 : 1
-        let newLog = {
+        let newLogItem = {
           type: "consent",
-          option: consented ? 'opt_in' : 'opt_out',
+          value: value,
           score: score,
           reason: consented ? "User failed to opt out of data collection" : "User opted out of data collection",
         }
-        let prevScore = onboardingData.score || 0;
-        let newScore = prevScore + score
-        let newData = { ...onboardingData, cookies: option, score: newScore, log: [...prevLog, newLog] }
-        saveOnboardingData(newData);
+        logOnboardingAction(newLogItem)
         showPointBanner(score)
     }
 
@@ -145,22 +141,18 @@
       window.location.href = "page2.html";
     }
 
-    function selectCookies(option, score) {
+    function selectCookies(value, score) {
       let prevLog = onboardingData.log || []
-      let reason = option == 'manage_preferences' ? 'User attemnpted to manage cookie preferences' : option == 'accept_all' ? 'User accepted all cookies' : 'User dismissed cookies popup without saving preferences'
-      let newLog = {
+      let reason = value == 'manage_preferences' ? 'User attemnpted to manage cookie preferences' : value == 'accept_all' ? 'User accepted all cookies' : 'User dismissed cookies popup without saving preferences'
+      let newLogItem = {
         type: "cookies",
-        option: option,
+        value: value,
         score: score,
         reason: reason,
       }
-      let prevScore = onboardingData.score || 0;
-      let newScore = prevScore + score
-      let newData = { ...onboardingData, cookies: option, score: newScore, log: [...prevLog, newLog] }
-      saveOnboardingData(newData);
-      console.log(newData)
-      document.getElementById("cookies-modal").style.display = "none";
+      logOnboardingAction(newLogItem)
       showPointBanner(score)
+      document.getElementById("cookies-modal").style.display = "none";
     }
 
   </script>

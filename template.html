@@ -36,7 +36,13 @@
   <script>
     function nextStep() {
       const newName = document.getElementById("name").value;
-      saveOnboardingData({ name: newName });
+      let newLogItem = {
+        type: "name",
+        value: newName,
+        score: 0,
+        reason: "User entered their name",
+      }
+      logOnboardingAction(newLogItem)
       window.location.href = "index.html";
     }
   </script>

@@ -10,11 +10,26 @@ function getOnboardingData() {
 function saveOnboardingData(newData) {
   const existing = getOnboardingData();
   const updated = { ...existing, ...newData };
+  console.log('ONBOARDING DATA', updated)
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 }
 
 function clearOnboardingData() {
   localStorage.removeItem(STORAGE_KEY);
+}
+
+function logOnboardingAction(logItem){
+  const onboardingData = getOnboardingData();
+  let type = logItem.type
+  let prevLog = onboardingData.log || []
+  console.log('prev log', prevLog)
+  // override previous instances of this log type
+  let log = [...prevLog].filter(e => e.type != type)
+  log.push(logItem)
+  let newScore = log.reduce((acc, e) => acc + e.score, 0)
+  let newData = { ...onboardingData, score: newScore, log: log }
+  newData[type] = logItem.value
+  saveOnboardingData(newData);
 }
 
 function showPointBanner(points) {

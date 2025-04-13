@@ -19,6 +19,7 @@ function clearOnboardingData() {
 }
 
 function logOnboardingAction(logItem){
+  logItem.timestamp = Date.now()
   const onboardingData = getOnboardingData();
   let type = logItem.type
   let prevLog = onboardingData.log || []

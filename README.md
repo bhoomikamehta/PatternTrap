@@ -1,7 +1,7 @@
 # PatternTrap
 An educational and interactive simulation game on Dark Patterns
 
-Pattern Trap is a multi-task game and simulated website aimed to educate users about dark patterns: deceptive UI/UX practices that trick users into making unintentional choices
+Pattern Trap is a multi-task game and simulated website aimed to educate users about *dark patterns*: deceptive UI/UX practices that trick users into making unintentional choices
 
 Simulated Website Experience:
 * Users interact with a realistic website that mimics everyday tasks.

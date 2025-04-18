@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+  <head>
+    <title>PatternTrap - Room Search</title>
+    <link rel="stylesheet" href="./styles/variables.css" />
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/header-footer.css" />
+    <script src="./scripts/storage.js"></script>
+    <script src="./scripts/page2.js"></script>
+    <script>
+      fetch("./components/header.html")
+        .then((res) => res.text())
+        .then((html) => (document.getElementById("header").innerHTML = html));
+      fetch("./components/footer.html")
+        .then((res) => res.text())
+        .then((html) => (document.getElementById("footer").innerHTML = html));
+      let onboardingData = getOnboardingData();
+      console.log(onboardingData);
+    </script>
+    <style>
+      .strongly-recommended {
+        color: blue;
+        font-style: italic;
+        font-size: 0.75em;
+      }
+      
+      .required-mark {
+        color: red;
+        font-style: italic;
+        font-size: 0.75em;
+      }
+      
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: normal;
+      }
+      
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 0;
+        box-sizing: border-box;
+      }
+      
+      .browse-link-container {
+        margin-top: 1.5rem;
+        text-align: right;
+      }
+      
+      .browse-link {
+        color: var(--light-gray);
+        text-decoration: none;
+        font-size: 0.9rem;
+      }
+      
+      .modal-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1.5rem;
+      }
+      
+      .btn-secondary {
+        background-color: var(--background-empty-color);
+        color: var(--secondary-color);
+        padding: 0.5rem 1.2rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        border: 1px solid var(--secondary-color);
+        cursor: pointer;
+      }
+      
+      .btn-secondary:hover {
+        background-color: var(--background-fill-color);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="header"></div>
+    <div class="container-wrapper">
+      <div class="container">
+        <h2>Plan Your Perfect Stay</h2>
+        <p>
+          <strong>Please provide detailed information to help us serve you better! We are a family-run business; each cancelled booking affects us.</strong>
+        </p>
+        <p>
+          To ensure we can offer you the perfect experience, we need some details about your trip.
+        </p>
+
+        <form id="travel-details-form">
+          <div class="form-group">
+            <label for="arrival-date">Arrival Date <span class="required-mark">*required</span></label>
+            <input type="date" id="arrival-date" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="departure-date">Departure Date <span class="required-mark">*required</span></label>
+            <input type="date" id="departure-date" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="guests">Number of Guests <span class="required-mark">*required</span></label>
+            <input type="number" id="guests" min="1" max="10" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="flight-number">Flight Number <span class="strongly-recommended">(Strongly Recommended)</span></label>
+            <input type="text" id="flight-number" placeholder="e.g., AA1234">
+          </div>
+          
+          <div class="form-group">
+            <label for="arrival-time">Estimated Arrival Time <span class="strongly-recommended">(Strongly Recommended)</span></label>
+            <input type="time" id="arrival-time">
+          </div>
+          
+          <div class="form-group">
+            <label for="passport-number">Passport Number <span class="strongly-recommended">(Strongly Recommended)</span></label>
+            <input type="text" id="passport-number" placeholder="For international travellers">
+          </div>
+          
+          <div class="form-group">
+            <label for="daily-schedule">Daily Schedule <span class="strongly-recommended">(Strongly Recommended)</span></label>
+            <textarea id="daily-schedule" rows="4" placeholder="Please share any restaurant or entertainment reservations to help us customize your trip"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="travel-reason">Reason for Travel <span class="strongly-recommended">(Strongly Recommended)</span></label>
+            <textarea id="travel-reason" rows="3" placeholder="A brief explanation helps us better prepare for your stay"></textarea>
+          </div>
+          
+          <div class="form-action-buttons">
+            <button type="button" id="next-btn" class="btn">Next</button>
+          </div>
+          <div class="browse-link-container">
+            <a href="#" id="browse-link" class="browse-link">Continue Browsing</a>
+          </div>
+        </form>
+
+        <div id="incomplete-form-modal" class="modal hidden">
+          <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Incomplete Submission</h2>
+            <p>We notice you haven't completed all the recommended fields. This information helps us provide you with the best possible stay experience.</p>
+            <p>Would you like to complete these fields before proceeding?</p>
+            <div class="modal-buttons">
+              <button class="btn-secondary" onclick="dismissModal()">Complete Later</button>
+              <button class="btn" onclick="completeForm()">Complete Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="footer"></div>
+  </body>
+
+  <script>
+    let modalDismissCount = 0;
+    
+    document.addEventListener("DOMContentLoaded", function() {
+      // Add event listener to the Next button
+      document.getElementById("next-btn").addEventListener("click", function() {
+        checkForm();
+      });
+      
+      // Add event listener to the Continue Browsing link
+      document.getElementById("browse-link").addEventListener("click", function(e) {
+        e.preventDefault();
+        proceedToBrowsing(true);
+      });
+    });
+    
+    function checkForm() {
+      // Make sure the required fields are filled
+      const arrivalDate = document.getElementById("arrival-date").value;
+      const departureDate = document.getElementById("departure-date").value;
+      const guests = document.getElementById("guests").value;
+      
+      if (!arrivalDate || !departureDate || !guests) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+      
+      const recommendedFields = [
+        document.getElementById("flight-number"),
+        document.getElementById("arrival-time"),
+        document.getElementById("passport-number"),
+        document.getElementById("daily-schedule"),
+        document.getElementById("travel-reason")
+      ];
+      
+      const hasEmptyRecommendedFields = recommendedFields.some(field => !field.value.trim());
+      
+      if (hasEmptyRecommendedFields && modalDismissCount < 2) {
+        document.getElementById("incomplete-form-modal").classList.remove("hidden");
+      } else {
+        proceedToBrowsing(false);
+      }
+    }
+    
+    function closeModal() {
+      document.getElementById("incomplete-form-modal").classList.add("hidden");
+    }
+    
+    function dismissModal() {
+      modalDismissCount++;
+      closeModal();
+      
+      if (modalDismissCount >= 2) {
+        proceedToBrowsing(false);
+      }
+    }
+    
+    function completeForm() {
+      closeModal();
+      // Focus on the first empty recommended field
+      const recommendedFields = [
+        document.getElementById("flight-number"),
+        document.getElementById("arrival-time"),
+        document.getElementById("passport-number"),
+        document.getElementById("daily-schedule"),
+        document.getElementById("travel-reason")
+      ];
+      
+      for (const field of recommendedFields) {
+        if (!field.value.trim()) {
+          field.focus();
+          break;
+        }
+      }
+    }
+    
+    function proceedToBrowsing(isRightChoice) {
+      let score = isRightChoice ? 1 : -1;
+      let value = isRightChoice ? "browse_link" : "next_button";
+      let reason = isRightChoice 
+        ? "User avoided forced action by using browse link" 
+        : "User fell for forced action by using next button";
+      
+      // Get selected dates and guest count
+      const arrivalDate = document.getElementById("arrival-date").value;
+      const departureDate = document.getElementById("departure-date").value;
+      const guestCount = document.getElementById("guests").value || "2";
+      
+      // Calculate number of nights
+      let nights = 1;
+      if (arrivalDate && departureDate) {
+        const startDate = new Date(arrivalDate);
+        const endDate = new Date(departureDate);
+        const timeDiff = endDate.getTime() - startDate.getTime();
+        nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        nights = nights > 0 ? nights : 1; // Ensure at least 1 night
+      }
+      
+      // Save the travel details to be used in page3
+      saveOnboardingData({
+        arrivalDate: arrivalDate,
+        departureDate: departureDate,
+        guestCount: guestCount,
+        nights: nights
+      });
+      
+      let newLogItem = {
+        type: "room_search",
+        value: value,
+        score: score,
+        reason: reason,
+      };
+      
+      logOnboardingAction(newLogItem);
+      showPointBanner(score);
+      
+      // Navigate to the next page
+      setTimeout(() => {
+        window.location.href = "page3.html";
+      }, 1500);
+    }
+  </script>
+</html>

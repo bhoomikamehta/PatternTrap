@@ -1,0 +1,499 @@
+<!doctype html>
+<html>
+  <head>
+    <title>PatternTrap - Browse Rooms</title>
+    <link rel="stylesheet" href="./styles/variables.css" />
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/header-footer.css" />
+    <script src="./scripts/storage.js"></script>
+    <script src="./scripts/page3.js"></script>
+    <script>
+      fetch("./components/header.html")
+        .then((res) => res.text())
+        .then((html) => (document.getElementById("header").innerHTML = html));
+      fetch("./components/footer.html")
+        .then((res) => res.text())
+        .then((html) => (document.getElementById("footer").innerHTML = html));
+      let onboardingData = getOnboardingData();
+      console.log(onboardingData);
+    </script>
+    <style>
+      .room-container {
+        margin-bottom: 2rem;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+      
+      .room-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: 2rem;
+        margin-top: 2rem;
+      }
+      
+      .room-image-container {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        overflow: hidden;
+      }
+      
+      .room-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .image-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background-color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: bold;
+      }
+      
+      .favorite-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: white;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      
+      .favorite-btn svg {
+        width: 24px;
+        height: 24px;
+      }
+      
+      .room-details {
+        padding: 1rem;
+      }
+      
+      .room-location {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+      
+      .location-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+      
+      .room-rating {
+        display: flex;
+        align-items: center;
+      }
+      
+      .room-description {
+        color: #666;
+        margin-bottom: 0.5rem;
+      }
+      
+      .room-dates {
+        color: #666;
+        margin-bottom: 0.5rem;
+      }
+      
+      .price-container {
+        display: flex;
+        align-items: center;
+        margin-top: 1rem;
+      }
+      
+      .price-original {
+        color: red;
+        text-decoration: line-through;
+        font-size: 1rem;
+        margin-right: 0.2rem;
+      }
+      
+      .price-value {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-right: 0.2rem;
+      }
+      
+      .per-night {
+        color: #666;
+        font-weight: normal;
+        font-size: 0.9rem;
+      }
+      
+      .booking-section {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 0.5rem;
+      }
+      
+      .image-dots {
+        position: absolute;
+        bottom: 1rem;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+      }
+      
+      .dot.active {
+        background-color: white;
+      }
+      
+      .sponsored-tag {
+        background-color: #f0f0f0;
+        color: #333;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        margin-left: 0.5rem;
+        font-style: italic;
+      }
+      
+      .top-pick-badge {
+        background-color: #ffd700;
+        color: #333;
+      }
+      
+      .guest-favorite-badge {
+        background-color: white;
+        color: #333;
+      }
+      
+      .urgency-notification {
+        background-color: #f8f8f8;
+        color: #e41749;
+        padding: 0.5rem;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: bold;
+      }
+      
+      .review-section {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+      }
+      
+      .review-text {
+        font-style: italic;
+        color: #666;
+        font-size: 0.9rem;
+      }
+      
+      .hidden-message {
+        font-weight: normal;
+      }
+      
+      .hidden-message strong {
+        font-weight: bold;
+      }
+      
+      .book-room-btn {
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      
+      .book-room-btn:hover {
+        background-color: var(--primary-color);
+      }
+      
+      .sponsored-room {
+        border: 2px solid #f0f0f0;
+        position: relative;
+      }
+      
+      /* Sneaky sponsored indicator that's hard to see */
+      .sneaky-sponsored {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: #f8f8f8;
+        background-color: #f5f5f5;
+        padding: 0.1rem 0.3rem;
+        font-size: 0.7rem;
+        opacity: 0.8;
+      }
+      
+      .sponsored-text {
+        color: #999;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="header"></div>
+    <div class="container-wrapper">
+      <div class="container">
+        <h2>Available Hotels</h2>
+        <p>We found 3 matches for your search. <span id="search-summary">1 night, 2 adults</span></p>
+        
+        <div class="room-grid">
+          <!-- Room 1 - Sponsored (but disguised) -->
+          <div class="room-container sponsored-room" data-room-id="1">
+            <span class="sneaky-sponsored">Sponsored</span>
+            <div class="room-image-container">
+              <img src="./images/hot1.avif" alt="Luxury Room" class="room-image">
+              <div class="image-badge top-pick-badge">Top Pick</div>
+              <div class="image-badge guest-favorite-badge" style="top: 3.5rem;">Guest Favorite</div>
+              <div class="image-badge" style="top: 6rem; background-color: #e41749; color: white;">25% off!</div>
+              <button class="favorite-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+              <div class="image-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+              </div>
+            </div>
+            <div class="room-details">
+              <div class="room-location">
+                <span class="location-name">Deluxe Stay Hotel</span>
+                <div class="room-rating">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  <span>4.96</span>
+                </div>
+              </div>
+              <div class="room-description">River and city views</div>
+              <div class="room-dates" id="room-dates-1">Jul 21 – 26</div>
+              <div class="urgency-notification">Booked 17 times today!<br>Only 1 room left; 23 people viewing now!</div>
+              <div class="review-section">
+                <div class="review-text">"Amazing stay! The views are breathtaking and the service was top-notch. Truly excellent experience. Highly recommend!"</div>
+              </div>
+              <div class="sponsored-text">Sponsored</div>
+              <div class="price-container">
+                <span class="price-original" id="price-original-1">$875</span>
+                <span class="price-value" id="price-value-1">$697</span>
+                <span class="per-night">per night</span>
+              </div>
+              <div class="booking-section">
+                <button class="book-room-btn" onclick="selectRoom(1, false)">Book Now</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Room 2 - Also with dark patterns -->
+          <div class="room-container" data-room-id="2">
+            <div class="room-image-container">
+              <img src="./images/hot2.avif" alt="Mountain View Room" class="room-image">
+              <div class="image-badge guest-favorite-badge">Guest Favorite</div>
+              <div class="image-badge" style="top: 3.5rem; background-color: #e41749; color: white;">28% off!</div>
+              <button class="favorite-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+              <div class="image-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+              </div>
+            </div>
+            <div class="room-details">
+              <div class="room-location">
+                <span class="location-name">Grandview Hotel</span>
+                <div class="room-rating">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  <span>4.89</span>
+                </div>
+              </div>
+              <div class="room-description">Sprawling city views</div>
+              <div class="room-dates" id="room-dates-2">Apr 20 – 25</div>
+              <div class="urgency-notification">Booked 9 times today!</div>
+              <div class="review-section">
+                <div class="review-text"><span class="hidden-message">"Really great place. Unforgettable experience. Never regret staying."</span></div>
+              </div>
+              <div class="price-container">
+                <span class="price-original" id="price-original-2">$785</span>
+                <span class="price-value" id="price-value-2">$613</span>
+                <span class="per-night">per night</span>
+              </div>
+              <div class="booking-section">
+                <button class="book-room-btn" onclick="selectRoom(2, false)">Book Now</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Room 3 - The "right" choice with minimal dark patterns -->
+          <div class="room-container" data-room-id="3">
+            <div class="room-image-container">
+              <img src="./images/hot3.avif" alt="City View Room" class="room-image">
+              <div class="image-badge guest-favorite-badge">Guest Favorite</div>
+              <button class="favorite-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+              </button>
+              <div class="image-dots">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+              </div>
+            </div>
+            <div class="room-details">
+              <div class="room-location">
+                <span class="location-name">The Standard Hotel</span>
+                <div class="room-rating">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                  </svg>
+                  <span>5.0</span>
+                </div>
+              </div>
+              <div class="room-description">City views</div>
+              <div class="room-dates" id="room-dates-3">Apr 28 – May 3</div>
+              <div class="review-section">
+                <div class="review-text">"Clean and comfortable room with an amazing view of the city. The host was very responsive and helpful."</div>
+              </div>
+              <div class="price-container">
+                <span class="price-value" id="price-value-3">$588</span>
+                <span class="per-night">per night</span>
+              </div>
+              <div class="booking-section">
+                <button class="book-room-btn" onclick="selectRoom(3, true)">Book Now</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="footer"></div>
+  </body>
+
+  <script>
+    function selectRoom(roomId, isRightChoice) {
+      let score = isRightChoice ? 1 : -1;
+      let value = roomId.toString();
+      let reason = isRightChoice 
+        ? "User selected the non-misleading listing" 
+        : "User fell for " + (roomId === 1 ? "disguised ads and fake scarcity" : "fake reviews and urgency");
+      
+      let newLogItem = {
+        type: "room_selection",
+        value: value,
+        score: score,
+        reason: reason,
+      };
+      
+      logOnboardingAction(newLogItem);
+      showPointBanner(score);
+      
+      // Navigate to the next page
+      setTimeout(() => {
+        window.location.href = "page4.html"; 
+      }, 1500);
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+      // Get travel details from storage
+      let onboardingData = getOnboardingData();
+      console.log("Onboarding data:", onboardingData);
+      
+      const nights = onboardingData.nights || 1;
+      const guestCount = onboardingData.guestCount || 2;
+      
+      // Format dates nicely
+      let arrivalDateText = "Jan 1";
+      let departureDateText = "Jan 2";
+      
+      if (onboardingData.arrivalDate) {
+        const arrivalDate = new Date(onboardingData.arrivalDate);
+        arrivalDateText = arrivalDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).replace(',', '');
+      }
+      
+      if (onboardingData.departureDate) {
+        const departureDate = new Date(onboardingData.departureDate);
+        departureDateText = departureDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).replace(',', '');
+      }
+      
+      // Update guest count and night count in title with date range
+      const dateRangeDisplay = arrivalDateText + " - " + departureDateText;
+      document.getElementById('search-summary').textContent = 
+        nights + ' night' + (nights > 1 ? 's' : '') + ', ' + guestCount + ' adult' + (guestCount > 1 ? 's' : '');
+      
+      // Update date ranges for each listing
+      document.getElementById('room-dates-1').textContent = dateRangeDisplay;
+      document.getElementById('room-dates-2').textContent = dateRangeDisplay;
+      document.getElementById('room-dates-3').textContent = dateRangeDisplay;
+      
+      // Base prices per night
+      const basePrice1 = 697;
+      const basePrice2 = 613;
+      const basePrice3 = 588;
+      
+      // Calculate original prices (before discount)
+      const originalPrice1 = Math.round(basePrice1 * 1.25);
+      const originalPrice2 = Math.round(basePrice2 * 1.28);
+      
+      // Update price displays for single night
+      document.getElementById('price-original-1').textContent = '$' + originalPrice1;
+      document.getElementById('price-value-1').textContent = '$' + basePrice1;
+      document.getElementById('price-original-2').textContent = '$' + originalPrice2;
+      document.getElementById('price-value-2').textContent = '$' + basePrice2;
+      document.getElementById('price-value-3').textContent = '$' + basePrice3;
+      
+      // Add event listeners for the favorite buttons
+      const favoriteButtons = document.querySelectorAll('.favorite-btn');
+      favoriteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const svg = this.querySelector('svg');
+          if (svg.getAttribute('fill') === 'none') {
+            svg.setAttribute('fill', '#e41749');
+          } else {
+            svg.setAttribute('fill', 'none');
+          }
+        });
+      });
+      
+      // Make the room containers clickable
+      const roomContainers = document.querySelectorAll('.room-container');
+      roomContainers.forEach(container => {
+        container.addEventListener('click', function() {
+          const roomId = this.getAttribute('data-room-id');
+          selectRoom(roomId, roomId === '3');
+        });
+      });
+    });
+  </script>
+</html>

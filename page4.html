@@ -1,1 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Room Options | Book Your Stay</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background-color: #1e3d59;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 2rem;
+    }
+    .room {
+      background: white;
+      border-radius: 10px;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    .room img {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+    }
+    .room h2 {
+      margin-top: 1rem;
+    }
+    .price-breakdown, .amenities {
+      margin-top: 1rem;
+    }
+    .price-breakdown ul, .amenities ul {
+      list-style: none;
+      padding: 0;
+    }
+    .price-breakdown li, .amenities li {
+      margin-bottom: 0.5rem;
+    }
+    .book-button {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background-color: #2a9d8f;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+    .disclaimer {
+      font-size: 0.9rem;
+      color: #777;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Choose Your Room</h1>
+  <p>Flexible accommodations with dynamically interpreted features and experience-based pricing</p>
+</header>
+
+<div class="container">
+
+  <!-- Room Option 1 -->
+  <div class="room">
+    <img src="standard-room.jpg" alt="Standard Comfort Room">
+    <h2>Standard Comfort Room</h2>
+    <p>A foundational rest environment, curated with essential resting surfaces and neutral ambiance. Bathroom facilities are present, configuration may vary.</p>
+
+    <div class="price-breakdown">
+      <h3>Estimated Nightly Cost</h3>
+      <ul>
+        <li>Base Rate: $89.00</li>
+        <li>Facilities Stabilization Cost: $11.75</li>
+        <li>Hospitality Management Fee: $9.20</li>
+        <li>Experience Adjustment Levy: $6.50</li>
+      </ul>
+    </div>
+
+    <div class="amenities">
+      <h4>Core Amenities</h4>
+      <ul>
+        <li>Air Distribution Interface</li>
+        <li>Hydration Units (usage may initiate delayed charges)</li>
+        <li>Visual Media Receiver</li>
+      </ul>
+    </div>
+
+    <p class="disclaimer">Image is for illustrative purposes. Amenity definitions subject to change without notice. Bathtub availability not guaranteed.</p>
+    <a class="book-button" href="checkout.html?room=standard">Book Now</a>
+  </div>
+
+  <!-- Room Option 2 -->
+  <div class="room">
+    <img src="deluxe-room.jpg" alt="Deluxe Premier Suite">
+    <h2>Deluxe Premier Suite</h2>
+    <p>An elevated rest suite featuring expanded space interpretation and premium soft-surround materials. Designed for discerning relaxers.</p>
+
+    <div class="price-breakdown">
+      <h3>Estimated Nightly Cost</h3>
+      <ul>
+        <li>Base Rate: $149.00</li>
+        <li>Facilities Stabilization Cost: $18.90</li>
+        <li>Hospitality Management Fee: $14.75</li>
+        <li>Experience Adjustment Levy: $10.00</li>
+      </ul>
+    </div>
+
+    <div class="amenities">
+      <h4>Included Features</h4>
+      <ul>
+        <li>Hydration Consumption Units (select items incur post-stay assessment)</li>
+        <li>Multi-tiered lighting interface</li>
+        <li>Partial wall dividers for conceptual privacy</li>
+      </ul>
+    </div>
+
+    <p class="disclaimer">Photos depict a typical room. Bathtub access may incur a Soaker Preference Fee. Exact bedding type not guaranteed.</p>
+    <a class="book-button" href="checkout.html?room=deluxe">Book Now</a>
+  </div>
+
+  <!-- Room Option 3 -->
+  <div class="room">
+    <img src="executive-suite.jpg" alt="Executive Signature Retreat">
+    <h2>Executive Signature Retreat</h2>
+    <p>The ultimate environment for elevated consciousness and premium rest articulation. Experience an undefined number of square feet and optional elegance zones.</p>
+
+    <div class="price-breakdown">
+      <h3>Estimated Nightly Cost</h3>
+      <ul>
+        <li>Base Rate: $219.00</li>
+        <li>Facilities Stabilization Cost: $24.50</li>
+        <li>Hospitality Management Fee: $19.95</li>
+        <li>Experience Adjustment Levy: $13.75</li>
+      </ul>
+    </div>
+
+    <div class="amenities">
+      <h4>Noteworthy Enhancements</h4>
+      <ul>
+        <li>Robust data illumination portal (Smart TV)</li>
+        <li>Hydration & fermentation stations (subject to boutique pricing logic)</li>
+        <li>Extended vanity reflection areas</li>
+      </ul>
+    </div>
+
+    <p class="disclaimer">Final pricing may vary by time of day, booking emotion, or planetary alignment. Image represents a configuration possibility only.</p>
+    <a class="book-button" href="checkout.html?room=executive">Book Now</a>
+  </div>
+
+</div>
+
+</body>
+</html>
 

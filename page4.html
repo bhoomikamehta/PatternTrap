@@ -33,16 +33,18 @@
       flex: 2;
     }
 
-    .hotel-images {
+     .hotel-images {
       flex: 1;
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
 
     .hotel-images img {
-      width: 100%;
+      width: calc(33.33% - 0.67rem);
       border-radius: 8px;
-      margin-bottom: 0.5rem;
     }
-    
     .availability-table {
       margin-top: 2rem;
       width: 100%;

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Deluxe Stay Hotel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f7f7f7;
+    }
+
+    header {
+      background-color: #166aa7;
+      color: white;
+      padding: 0.5rem 2rem; 
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 2rem;
+      background-color: white;
+    }
+
+   .hotel-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+    .hotel-details {
+      flex: 2;
+    }
+
+     .hotel-images {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hotel-images img {
+      width: calc(33.33% - 0.67rem);
+      border-radius: 8px;
+    }
+    .availability-table {
+      margin-top: 2rem;
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .availability-table th,
+    .availability-table td {
+      border: 1px solid #ccc;
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    .availability-table th {
+      background-color: #e6f0f3;
+    }
+
+    .room-tier {
+      font-weight: bold;
+      color: #004d4d;
+    }
+
+    .blurry {
+      opacity: 0.7;
+    }
+
+    .price-note {
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    .fees-list {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .reserve-btn {
+      background-color: #00796b;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Deluxe Stay Hotel</h1>
+  <p>7 Mirage Way, Veil District, Somewhere <a href="#" style="color:#00ffff;"></a></p>
+</header>
+
+<div class="container">
+
+  <div class="hotel-info">
+    <div class="hotel-details">
+      <p>Welcome to Deluxe Stay Hotel, an elevated hospitality enclave situated at the confluence of panoramic river reverie and dynamic urban sprawl. Perfectly positioned within a conceptually luxurious precinct, guests enjoy proximity to ambient tranquility on one side, and curated metropolitan vibrance on the other.Each of our immersive guest modules — including premium suites and variable-stay capsules — features diffuse natural illumination through panoramic apertures, delivering ever-shifting perspectives of river-city duality. A soothing material palette, multi-sensory texture mapping, and amenity nodes such as hydra-brew capsules, immersive viewing panels, Deluxe Signature bathwear, and atmosphere-reactive toiletries enhance every stay. Communal spaces include the multi-modal dining space, where cuisine converges with culture through our transient dining program (reservation adaptive). Engage with hydra-fusion bites and rhythm-responsive beverage sets, or recalibrate over an ambient roast in our all-temporal café zone.</p>
+      <p>For deeper restoration, guests may enter the Tranquility Room (access governed by Circadian Eligibility Protocols), activate repose in the Private Flux Gym, or participate in resonance-aligned treatments at the Rejuvenation SubZone — all optimized for pre- or post-exploration decompression.</p>      
+      <p>Couples particularly appreciate the dual-environment setting — rating it 9.6 for partnership-compatible escape structuring.</p>
+      <p> Each room features dimensional comfort modules and an LCD interface. Facilities may include atmospheric soaking vessels, seating surfaces, and sensorial ambiance management systems.*</p>
+    </div>
+    <div class="hotel-images">
+      <img src="./images/hot1r3.avif" alt="Deluxe Room">
+      <img src="./images/hot1r1.avif" alt="Premium Room">
+      <img class="blurry" src="./images/hot1r2.avif" alt="Standard Room">
+    </div>
+  </div>
+
+  <h2>Availability & Room Options</h2>
+  <table class="availability-table">
+    <tr>
+      <th>Room Type</th>
+      <th>Features</th>
+      <th>Price Breakdown</th>
+      <th>Select a Room</th>
+    </tr>
+    <tr>
+      <td class="room-tier">Executive Signature Retreat</td>
+      <td>
+        Includes:<br>
+        • Atmospheric tub module*<br>
+        • Smart minibar†<br>
+        • Complimentary AquaSoft robes<br>
+        <small class="price-note">† "Hydration consumption units include pre-curated selections subject to deferred cost application."</small>
+      </td>
+      <td>
+        Base Rate: $320<br>
+        Facilities Stabilization Cost: $35<br>
+        Hospitality Management Fee: $18<br>
+        Experience Adjustment Levy: $14<br>
+        <em>Total varies</em>
+      </td>
+      <td><button class="reserve-btn">I'll reserve</button></td>
+    </tr>
+    <tr>
+      <td class="room-tier">Deluxe Zenith Enclave</td>
+      <td>
+        • Configurable rest surface<br>
+        • Indirect soaking access†<br>
+        • Experience-optimized lighting
+      </td>
+      <td>
+        Base Rate: $248<br>
+        Hospitality Tax Unit: $22<br>
+        “Petite Maintenance” Charge: $16<br>
+      </td>
+      <td><button class="reserve-btn">I'll reserve</button></td>
+    </tr>
+    <tr>
+      <td class="room-tier">Basic Tranquil Capsule</td>
+      <td>
+        • Sleeping zone<br>
+        • Shared hydration station access<br>
+        • Visual media services
+      </td>
+      <td>
+        Base Rate: $119<br>
+        Service Flux Fee: $12<br>
+        Value Assurance Layer: $9<br>
+      </td>
+      <td><button class="reserve-btn">I'll reserve</button></td>
+    </tr>
+  </table>
+
+  <div class="fees-list">
+    *Use of select fixtures (e.g., bathtubs, robes, atmosphere jets) may incur undisclosed post-usage fees.<br>
+    Cancellation policy: <span lang="it">Non-refundable</span> | Refund terms: <span lang="zh">不可退款</span>
+  </div>
+
+</div>
+
+</body>
+</html>

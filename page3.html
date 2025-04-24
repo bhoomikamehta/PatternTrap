@@ -417,12 +417,29 @@
       
       logOnboardingAction(newLogItem);
       showPointBanner(score);
+
+    // Navigate to next page based on roomId
+    let nextPage;
+    if (roomId === 1) {
+      nextPage = "page4standard.html";
+    } else if (roomId === 2) {
+      nextPage = "page4deluxe.html";
+    } else if (roomId === 3) {
+      nextPage = "page4grandview.html";
+    } 
+
+    // Navigate after a short delay
+    setTimeout(() => {
+      window.location.href = nextPage;
+    }, 1500);
+  }
+
       
       // Navigate to the next page
-      setTimeout(() => {
-        window.location.href = "page4.html"; 
-      }, 1500);
-    }
+    //   setTimeout(() => {
+    //     window.location.href = "page4.html"; 
+    //   }, 1500);
+    // }
     
     document.addEventListener("DOMContentLoaded", function() {
       // Get travel details from storage

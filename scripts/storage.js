@@ -34,7 +34,11 @@ function logOnboardingAction(logItem){
 }
 
 function showPointBanner(points) {
-  const banner = document.getElementById('point-banner');
+  let banner = document.getElementById('point-banner');
+  if(!banner){
+    banner = document.createElement('div');
+    banner.id = 'point-banner';
+  }
   const message = document.createElement('div');
   message.classList.add('point-message');
 

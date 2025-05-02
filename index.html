@@ -31,21 +31,31 @@
         <div>
           <h2>Welcome to the PatternTrap!</h2>
           <p>
-            We offer hotels, spas, and dining experiences at the lowest prices, guaranteed.
-          <p>
-            How do we keep our prices so low you ask? Well, by collecting and selliing your data of course!
-          </p>
-          <p>
-            See if you can make it through our booking process while avoiding the <strong>dark patterns</strong> sprinked throughout.
-          </p>
-          <p>
-            <em>Your mission:</em> try to book a room without falling into traps. 
-            Stay sharp. Every misstep costs you points.
+            We offer hotels, spas, and dining experiences at the lowest prices,
+            guaranteed.
           </p>
 
-          <div id='consent-box'>
-            <label><input id='consent' type="checkbox" name="consent" checked>  I acknowledge and consent to the collection and use of my data for research and analytical purposes in accordance with the study's privacy policy.</label>
-            <br/><span class='sneaky'>Submitting in 10</span>
+          <p>
+            How do we keep our prices so low you ask? Well, by collecting and
+            selliing your data of course!
+          </p>
+          <p>
+            See if you can make it through our booking process while avoiding
+            the <strong>dark patterns</strong> sprinked throughout.
+          </p>
+          <p>
+            <em>Your mission:</em> try to book a room without falling into
+            traps. Stay sharp. Every misstep costs you points.
+          </p>
+
+          <div id="consent-box">
+            <label
+              ><input id="consent" type="checkbox" name="consent" checked /> I
+              acknowledge and consent to the collection and use of my data for
+              research and analytical purposes in accordance with the study's
+              privacy policy.</label
+            >
+            <br /><span class="sneaky">Submitting in 10</span>
           </div>
 
           <!-- <h2>1. Entering the Platform</h2>          
@@ -63,21 +73,56 @@
           <p>The "Save Preferences" button is presented in a neutral style, while "Continue with Recommendations" stands out in placement and appearance.</p>
           <p>Users who attempt to proceed without making a selection are re-prompted with full-screen overlays after several interactions.</p> -->
         </div>
-        <button class='btn' onclick="nextStep()">Next</button>
+        <button class="btn" onclick="nextStep()">Next</button>
         <div id="cookies-modal" class="modal hidden footer-modal">
           <div class="modal-content">
-            <span class="close" onclick="selectCookies('dismiss', -1)">&times;</span>
+            <span class="close" onclick="selectCookies('dismiss', -1)"
+              >&times;</span
+            >
             <h2>Cookie Preferences</h2>
-            <p>We use cookies to enhance your experience. Please select your preferences:</p>
+            <p>
+              We use cookies to enhance your experience. Please select your
+              preferences:
+            </p>
             <form id="cookies-form">
-              <label><input type="checkbox" name="essential" checked disabled> Essential Cookies</label><br>
-              <label><input type="checkbox" name="analytics" checked> Analytics Cookies</label><br>
-              <label><input type="checkbox" name="advertising" checked> Advertising Cookies</label><br>
-              <label><input type="checkbox" name="personalization" checked> Personalization Cookies</label><br>
-              <div class='sneaky'><label><input type="checkbox" checked name="advertising"> I agree that dismissing this popup is the same as accepting all</label></div><br>
-              <div class='row space-between'>
-                <div class='sneaky'><button type="button" onclick="selectCookies('manage_preferences', 1)">Manage Preferences</button></div>
-                <a href='#' class="btn" onclick="selectCookies('accept_all', -1)">Accept All</a>
+              <label
+                ><input type="checkbox" name="essential" checked disabled />
+                Essential Cookies</label
+              ><br />
+              <label
+                ><input type="checkbox" name="analytics" checked /> Analytics
+                Cookies</label
+              ><br />
+              <label
+                ><input type="checkbox" name="advertising" checked />
+                Advertising Cookies</label
+              ><br />
+              <label
+                ><input type="checkbox" name="personalization" checked />
+                Personalization Cookies</label
+              ><br />
+              <div class="sneaky">
+                <label
+                  ><input type="checkbox" checked name="advertising" /> I agree
+                  that dismissing this popup is the same as accepting all</label
+                >
+              </div>
+              <br />
+              <div class="row space-between">
+                <div class="sneaky">
+                  <button
+                    type="button"
+                    onclick="selectCookies('manage_preferences', 1)"
+                  >
+                    Manage Preferences
+                  </button>
+                </div>
+                <a
+                  href="#"
+                  class="btn"
+                  onclick="selectCookies('accept_all', -1)"
+                  >Accept All</a
+                >
               </div>
             </form>
           </div>
@@ -89,71 +134,90 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const consentBox = document.getElementById('consent-box');
-      consentBox.addEventListener('mouseenter', () => {
+      const consentBox = document.getElementById("consent-box");
+      consentBox.addEventListener("mouseenter", () => {
         const maxX = window.innerWidth - consentBox.offsetWidth;
         const maxY = window.innerHeight - consentBox.offsetHeight;
         const newX = Math.floor(Math.random() * maxX);
         const newY = Math.floor(Math.random() * maxY);
-        
+
         consentBox.style.left = `${newX}px`;
         consentBox.style.top = `${newY}px`;
       });
-      const contentBoxSpan = consentBox.querySelector('span');
+      const contentBoxSpan = consentBox.querySelector("span");
       let countdown = 10;
       const interval = setInterval(() => {
         countdown--;
         contentBoxSpan.textContent = `Submitting in ${countdown}`;
         if (countdown <= 0) {
           clearInterval(interval);
-          if(consentBox.querySelector('input').checked){
-            logConsent(true)
+          if (consentBox.querySelector("input").checked) {
+            logConsent(true);
           } else {
-            logConsent(false)
+            logConsent(false);
           }
-          consentBox.style.display = 'none';
+          consentBox.style.display = "none";
         }
       }, 1000);
+    });
 
-    })
-
-      function logConsent(consented){
-        let value = consented ? 'opt_in' : 'opt_out'
-        let score = consented ? -1 : 1
-        let newLogItem = {
-          type: "consent",
-          value: value,
-          score: score,
-          reason: consented ? "User failed to opt out of data collection" : "User opted out of data collection",
-        }
-        logOnboardingAction(newLogItem)
-        showPointBanner(score)
+    function logConsent(consented) {
+      let value = consented ? "opt_in" : "opt_out";
+      let score = consented ? -1 : 1;
+      let newLogItem = {
+        type: "consent",
+        value: value,
+        score: score,
+        reason: consented
+          ? "User failed to opt out of data collection"
+          : "User opted out of data collection",
+      };
+      logOnboardingAction(newLogItem);
+      showPointBanner(score);
     }
 
-    function bookNow(){
-      alert('book now')
-      nextStep()
+    function bookNow() {
+      nextStep();
     }
 
     function nextStep() {
       // const newName = document.getElementById("name").value;
       // saveOnboardingData({ ...onboardingData, name: newName });
+      if (document.getElementById("cookies-modal").style.display != "none") {
+        let score = -1;
+        let newLogItem = {
+          type: "cookies",
+          value: "ignored_cookies",
+          score: score,
+          reason: "User continued before acknowledging cookies banner",
+        };
+        logOnboardingAction(newLogItem);
+        showPointBanner(score);
+        setTimeout(() => {
+          window.location.href = "page2.html";
+        }, 1000);
+        return;
+      }
       window.location.href = "page2.html";
     }
 
     function selectCookies(value, score) {
-      let prevLog = onboardingData.log || []
-      let reason = value == 'manage_preferences' ? 'User attemnpted to manage cookie preferences' : value == 'accept_all' ? 'User accepted all cookies' : 'User dismissed cookies popup without saving preferences'
+      let prevLog = onboardingData.log || [];
+      let reason =
+        value == "manage_preferences"
+          ? "User attemnpted to manage cookie preferences"
+          : value == "accept_all"
+            ? "User accepted all cookies"
+            : "User dismissed cookies popup without saving preferences";
       let newLogItem = {
         type: "cookies",
         value: value,
         score: score,
         reason: reason,
-      }
-      logOnboardingAction(newLogItem)
-      showPointBanner(score)
+      };
+      logOnboardingAction(newLogItem);
+      showPointBanner(score);
       document.getElementById("cookies-modal").style.display = "none";
     }
-
   </script>
 </html>

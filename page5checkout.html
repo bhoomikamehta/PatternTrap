@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirm Your Stay - PatternTrap</title>
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/header-footer.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <div id="header"></div>
+  <div class="container">
+    <h1>Almost Done! Confirm Your Stay</h1>
+    <section class="summary">
+      <h2>Upgrade Bundles (Pre-selected for Your Comfort)</h2>
+      <form id="extras-form">
+        <label class="preselected-option">
+          <input type="checkbox" checked>
+          Flexible Cancellation <span class="tooltip">(Highly recommended in emergencies)</span>
+        </label><br>
+        <label class="preselected-option">
+          <input type="checkbox" checked>
+          Complimentary Breakfast <span class="tooltip">(Important nutrition!)</span>
+        </label><br>
+        <label class="preselected-option">
+          <input type="checkbox" checked>
+          24-hour Change Support <span class="tooltip">(For peace of mind)</span>
+        </label><br><br>
+        <p class="confirm-shame">
+          Unchecking may result in <strong>loss of benefits</strong> and <em>stressful mornings</em>.
+        </p>
+        <button type="submit" class="btn-highlighted">Yes, I want comfort</button>
+        <button type="submit" class="btn-highlighted">Confirm & Pay</button>
+        <button type="button" class="btn-muted small-text">I will take the risk</button>
+      </form>
+    </section>
+
+    <section class="fees">
+      <h2>Final Payment Summary</h2>
+      <p><strong>Room Base Price:</strong> €19.99 ≈ 0.73 NGP / 4.3 🌕 units <span class="tooltip">Subject to planetary alignment</span></p>
+      <ul class="fee-list">
+        <li>Window Fee: €6.00 <span class="tooltip">Applies to all rooms with any window, real or decorative</span></li>
+        <li>Air Circulation Charge: €4.25 <span class="tooltip">HVAC system use surcharge</span></li>
+        <li>Bed Setup Fee: €5.50 <span class="tooltip">Includes pillow fluffing & linen licensing</span></li>
+        <li>Quiet Hours Surcharge: €3.33 <span class="tooltip">Premium for noise-managed environments*</span></li>
+        <li>Urban Destination Fee: €7.10 <span class="tooltip">Access to Wi-Fi, gym, pool, and newspapers</span></li>
+        <li>Safe Fee: €2.95 <span class="tooltip">Presence of safe, regardless of usage</span></li>
+        <li>RAT, HSTC, EEFE: €3.89 <span class="tooltip">Required administrative tariffs</span></li>
+      </ul>
+      <p class="cryptic-total"><strong>Total:</strong> Subtotal: 17.5Ƀ + (12% WAF × 2.3 JRS) – 1 LoveToken</p>
+    </section>
+  </div>
+
+  <div id="footer"></div>
+  <script src="scripts/storage.js"></script>
+  <script src="scripts/page5.js"></script>
+  <script>
+    fetch("./components/header.html")
+      .then((res) => res.text())
+      .then((html) => (document.getElementById("header").innerHTML = html));
+    fetch("./components/footer.html")
+      .then((res) => res.text())
+      .then((html) => (document.getElementById("footer").innerHTML = html));
+  </script>
+</body>
+</html>

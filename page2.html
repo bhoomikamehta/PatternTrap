@@ -19,9 +19,9 @@
     </script>
     <style>
       .strongly-recommended {
-        color: blue;
+        color: red;
         font-style: italic;
-        font-size: 0.75em;
+        font-size: 0.7em;
       }
       
       .required-mark {
@@ -112,27 +112,27 @@
           </div>
           
           <div class="form-group">
-            <label for="flight-number">Flight Number <span class="strongly-recommended">(Strongly Recommended)</span></label>
+            <label for="flight-number">Flight Number <span class="strongly-recommended">*recommended</span></label>
             <input type="text" id="flight-number" placeholder="e.g., AA1234">
           </div>
           
           <div class="form-group">
-            <label for="arrival-time">Estimated Arrival Time <span class="strongly-recommended">(Strongly Recommended)</span></label>
+            <label for="arrival-time">Estimated Arrival Time <span class="strongly-recommended">*recommended</span></label>
             <input type="time" id="arrival-time">
           </div>
           
           <div class="form-group">
-            <label for="passport-number">Passport Number <span class="strongly-recommended">(Strongly Recommended)</span></label>
+            <label for="passport-number">Passport Number <span class="strongly-recommended">*recommended</span></label>
             <input type="text" id="passport-number" placeholder="For international travellers">
           </div>
           
           <div class="form-group">
-            <label for="daily-schedule">Daily Schedule <span class="strongly-recommended">(Strongly Recommended)</span></label>
+            <label for="daily-schedule">Daily Schedule <span class="strongly-recommended">*recommended</span></label>
             <textarea id="daily-schedule" rows="4" placeholder="Please share any restaurant or entertainment reservations to help us customize your trip"></textarea>
           </div>
           
           <div class="form-group">
-            <label for="travel-reason">Reason for Travel <span class="strongly-recommended">(Strongly Recommended)</span></label>
+            <label for="travel-reason">Reason for Travel <span class="strongly-recommended">*recommended</span></label>
             <textarea id="travel-reason" rows="3" placeholder="A brief explanation helps us better prepare for your stay"></textarea>
           </div>
           
@@ -238,16 +238,50 @@
     }
     
     function proceedToBrowsing(isRightChoice) {
-      let score = isRightChoice ? 1 : -1;
-      let value = isRightChoice ? "browse_link" : "next_button";
-      let reason = isRightChoice 
-        ? "User avoided forced action by using browse link" 
-        : "User fell for forced action by using next button";
-      
-      // Get selected dates and guest count
+      // Get required fields
       const arrivalDate = document.getElementById("arrival-date").value;
       const departureDate = document.getElementById("departure-date").value;
       const guestCount = document.getElementById("guests").value || "2";
+      
+      // Get recommended fields
+      const recommendedFields = [
+        document.getElementById("flight-number"),
+        document.getElementById("arrival-time"),
+        document.getElementById("passport-number"),
+        document.getElementById("daily-schedule"),
+        document.getElementById("travel-reason")
+      ];
+      
+      // Check if any recommended fields are filled
+      const anyRecommendedFieldFilled = recommendedFields.some(field => field.value.trim() !== "");
+      
+      // Determine score based on new logic
+      let score;
+      let reason;
+      
+      if (isRightChoice) {
+        // Continue Browsing button is always +1
+        score = 1;
+        reason = "User avoided forced action by using browse link";
+      } else {
+        // Next button - scoring depends on what's filled out
+        if (arrivalDate && departureDate && guestCount) {
+          // All required fields are filled
+          if (anyRecommendedFieldFilled) {
+            // But some recommended fields are filled - this is the trap!
+            score = -1;
+            reason = "User fell for trap by filling recommended fields and using next button";
+          } else {
+            // Only required fields are filled - reward the user
+            score = 1;
+            reason = "User filled only required fields and used next button correctly";
+          }
+        } else {
+          // Missing required fields - neutral score
+          score = 0;
+          reason = "User clicked next without filling required fields";
+        }
+      }
       
       // Calculate number of nights
       let nights = 1;
@@ -269,7 +303,7 @@
       
       let newLogItem = {
         type: "room_search",
-        value: value,
+        value: isRightChoice ? "browse_link" : "next_button",
         score: score,
         reason: reason,
       };

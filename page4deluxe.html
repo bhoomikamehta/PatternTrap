@@ -3,6 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Deluxe Stay Hotel</title>
+
+  <!--   Updated header code -->
+    <link rel="stylesheet" href="./styles/variables.css" />
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/header-footer.css" />
+    <script src="./scripts/storage.js"></script>
+    <script>
+      fetch("./components/header.html")
+        .then((res) => res.text())
+        .then((html) => (document.getElementById("header").innerHTML = html));
+      fetch("./components/footer.html")
+        .then((res) => res.text())
+        .then((html) => (document.getElementById("footer").innerHTML = html));
+      let onboardingData = getOnboardingData();
+      console.log(onboardingData);
+    </script>
+
+
+  
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -10,11 +29,11 @@
       background-color: #f7f7f7;
     }
 
-    header {
+/*     header {
       background-color: #166aa7;
       color: white;
       padding: 0.5rem 2rem; 
-    }
+    } */
 
     .container {
       max-width: 1100px;
@@ -94,11 +113,12 @@
   </style>
 </head>
 <body>
+  <div id="header"></div>
 
-<header>
+<!-- <header>
   <h1>Deluxe Stay Hotel</h1>
   <p>245 Horizon Blvd, Central Core, Eastvale, CA 94108 <a href="#" style="color:#00ffff;"></a></p>
-</header>
+</header> -->
 
 <div class="container">
 

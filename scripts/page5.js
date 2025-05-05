@@ -1,5 +1,5 @@
 // scripts/page5.js
-
+/*
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("extras-form");
 
@@ -33,4 +33,4 @@ document.addEventListener("DOMContentLoaded", () => {
     // Proceed to next page
     window.location.href = "page6.html";
   });
-});
+});*/

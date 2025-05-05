@@ -159,7 +159,7 @@
         <em>Total varies</em>
       </td>
       <td>
-  <a class="reserve-btn" href="https://bhoomikamehta.github.io/PatternTrap/page5checkout.html">I'll reserve</a>
+  <a class="reserve-btn">I'll reserve</a>
 </td>
 
 <!--       <td><a href="https://bhoomikamehta.github.io/PatternTrap/page5checkout.html"><button class="reserve-btn">I'll reserve</button></a></td>
@@ -180,7 +180,7 @@
         “Petite Maintenance” Charge: $70<br>
       </td>
             <td>
-  <a class="reserve-btn" href="https://bhoomikamehta.github.io/PatternTrap/page5checkout.html">I'll reserve</a>
+  <a class="reserve-btn">I'll reserve</a>
 </td>
 <!--       <td><a href="https://bhoomikamehta.github.io/PatternTrap/page5checkout.html"><button class="reserve-btn">I'll reserve</button></a></td>
     </tr> -->
@@ -200,7 +200,7 @@
         Frais pour Articles Divers: $30<br>
       </td>
             <td>
-  <a class="reserve-btn" href="https://bhoomikamehta.github.io/PatternTrap/page5checkout.html">I'll reserve</a>
+  <a class="reserve-btn">I'll reserve</a>
 </td>
 <!--       <td><a href="https://bhoomikamehta.github.io/PatternTrap/page5checkout.html"><button class="reserve-btn">I'll reserve</button></a></td>
     </tr> -->
@@ -212,6 +212,37 @@
   </div>
 
 </div>
+<script src="./scripts/storage.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const reserveButtons = document.querySelectorAll('.reserve-btn');
 
+    reserveButtons.forEach(button => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+
+        const row = this.closest('tr');
+        const roomTierCell = row.querySelector('.room-tier');
+        const roomType = roomTierCell ? roomTierCell.textContent.trim().toLowerCase() : 'unknown';
+
+        const score = roomType.includes('executive') ? 5 : 0;
+        const reason = score ? "Selected best room (Executive, +5 points)." : "Selected lower-tier room (0 points).";
+
+        logOnboardingAction({
+          type: "room_type_selection",
+          value: roomType,
+          score: score,
+          reason: reason
+        });
+
+        showPointBanner(score, score ? "Best choice! +5 points." : "No points for less valuable room.");
+
+        setTimeout(() => {
+          window.location.href = "page5checkout.html";
+        }, 500);
+      });
+    });
+  });
+</script>
 </body>
 </html>

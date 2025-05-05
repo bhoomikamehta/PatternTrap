@@ -402,117 +402,83 @@
 
   <script>
     function selectRoom(roomId, isRightChoice) {
-      let score = isRightChoice ? 1 : -1;
-      let value = roomId.toString();
+      let score = isRightChoice ? 3 : 0;
       let reason = isRightChoice 
-        ? "User selected the non-misleading listing" 
-        : "User fell for " + (roomId === 1 ? "disguised ads and fake scarcity" : "fake reviews and urgency");
-      
-      let newLogItem = {
-        type: "room_selection",
-        value: value,
+        ? "User selected the Standard Hotel (best value, +3 points)."
+        : roomId === 1
+          ? "User selected the Deluxe Stay Hotel (misleading ads/urgency, 0 points)."
+          : "User selected the Grandview Hotel (misleading reviews/urgency, 0 points).";
+  
+      logOnboardingAction({
+        type: "hotel_selection",
+        value: roomId.toString(),
         score: score,
-        reason: reason,
+        reason: reason
+      });
+  
+      showPointBanner(score, score ? "Good choice! +3 points." : "No points for choosing flashy hotel.");
+
+      const nextPages = {
+        1: "page4deluxe.html",
+        2: "page4grandview.html",
+        3: "page4standard.html"
       };
-      
-      logOnboardingAction(newLogItem);
-      showPointBanner(score);
-
-    // Navigate to next page based on roomId - updated by Ariel
-    let nextPage;
-    if (value === '1') {
-      nextPage = "page4deluxe.html";
-    } else if (value === '2') {
-      nextPage = "page4grandview.html";
-    } else if (value === '3') {
-      nextPage = "page4standard.html";
-    } 
-
-    // Navigate after a short delay
-      // I'm assuming copilot added this delay? copilot loves delays for some reason... -sal
-    // setTimeout(() => {
-      window.location.href = nextPage;
-    // }, 1500);
-      // if there is a case to be made for this delay adding to a dark patern I'm all ears, but otherwise I'd suggest we remove
-  }
-
-      
-      // Navigate to the next page
-    //   setTimeout(() => {
-    //     window.location.href = "page4.html"; 
-    //   }, 1500);
-    // }
-    
+      setTimeout(() => {
+      window.location.href = nextPages[roomId];
+      }, 1000);
+    }
+  
     document.addEventListener("DOMContentLoaded", function() {
-      // Get travel details from storage
-      let onboardingData = getOnboardingData();
-      console.log("Onboarding data:", onboardingData);
-      
+      const onboardingData = getOnboardingData();
       const nights = onboardingData.nights || 1;
       const guestCount = onboardingData.guestCount || 2;
-      
-      // Format dates nicely
-      let arrivalDateText = "Jan 1";
-      let departureDateText = "Jan 2";
-      
-      if (onboardingData.arrivalDate) {
-        const arrivalDate = new Date(onboardingData.arrivalDate);
-        arrivalDateText = arrivalDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).replace(',', '');
-      }
-      
-      if (onboardingData.departureDate) {
-        const departureDate = new Date(onboardingData.departureDate);
-        departureDateText = departureDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).replace(',', '');
-      }
-      
-      // Update guest count and night count in title with date range
-      const dateRangeDisplay = arrivalDateText + " - " + departureDateText;
-      document.getElementById('search-summary').textContent = 
-        nights + ' night' + (nights > 1 ? 's' : '') + ', ' + guestCount + ' adult' + (guestCount > 1 ? 's' : '');
-      
-      // Update date ranges for each listing
-      document.getElementById('room-dates-1').textContent = dateRangeDisplay;
-      document.getElementById('room-dates-2').textContent = dateRangeDisplay;
-      document.getElementById('room-dates-3').textContent = dateRangeDisplay;
-      
-      // Base prices per night
-      const basePrice1 = 697;
-      const basePrice2 = 613;
-      const basePrice3 = 588;
-      
-      // Calculate original prices (before discount)
-      const originalPrice1 = Math.round(basePrice1 * 1.25);
-      const originalPrice2 = Math.round(basePrice2 * 1.28);
-      
-      // Update price displays for single night
-      document.getElementById('price-original-1').textContent = '$' + originalPrice1;
-      document.getElementById('price-value-1').textContent = '$' + basePrice1;
-      document.getElementById('price-original-2').textContent = '$' + originalPrice2;
-      document.getElementById('price-value-2').textContent = '$' + basePrice2;
-      document.getElementById('price-value-3').textContent = '$' + basePrice3;
-      
-      // Add event listeners for the favorite buttons
-      const favoriteButtons = document.querySelectorAll('.favorite-btn');
-      favoriteButtons.forEach(button => {
+  
+      const dateOptions = { month: 'short', day: 'numeric' };
+      const arrivalDate = onboardingData.arrivalDate ? new Date(onboardingData.arrivalDate + 'T00:00:00') : new Date();
+      const departureDate = onboardingData.departureDate ? new Date(onboardingData.departureDate + 'T00:00:00') : new Date(arrivalDate.getTime() + 86400000);
+  
+      const dateRangeDisplay = `${arrivalDate.toLocaleDateString('en-US', dateOptions)} - ${departureDate.toLocaleDateString('en-US', dateOptions)}`;
+  
+      document.getElementById('search-summary').textContent =
+        `${nights} night${nights > 1 ? 's' : ''}, ${guestCount} adult${guestCount > 1 ? 's' : ''}`;
+  
+      ['room-dates-1', 'room-dates-2', 'room-dates-3'].forEach(id => {
+        document.getElementById(id).textContent = dateRangeDisplay;
+      });
+  
+      const prices = [697, 613, 588];
+      const originalPrices = [Math.round(prices[0] * 1.25), Math.round(prices[1] * 1.28)];
+  
+      document.getElementById('price-original-1').textContent = `$${originalPrices[0]}`;
+      document.getElementById('price-value-1').textContent = `$${prices[0]}`;
+      document.getElementById('price-original-2').textContent = `$${originalPrices[1]}`;
+      document.getElementById('price-value-2').textContent = `$${prices[1]}`;
+      document.getElementById('price-value-3').textContent = `$${prices[2]}`;
+  
+      document.querySelectorAll('.favorite-btn').forEach(button => {
         button.addEventListener('click', function(e) {
           e.stopPropagation();
           const svg = this.querySelector('svg');
-          if (svg.getAttribute('fill') === 'none') {
-            svg.setAttribute('fill', '#e41749');
-          } else {
-            svg.setAttribute('fill', 'none');
-          }
+          const isFavorited = svg.getAttribute('fill') === 'none';
+          svg.setAttribute('fill', isFavorited ? '#e41749' : 'none');
+          svg.setAttribute('stroke', isFavorited ? '#e41749' : 'currentColor');
         });
       });
-      
-      // Make the room containers clickable
-      const roomContainers = document.querySelectorAll('.room-container');
-      roomContainers.forEach(container => {
-        container.addEventListener('click', function() {
-          const roomId = this.getAttribute('data-room-id');
-          selectRoom(roomId, roomId === '3');
+  
+      document.querySelectorAll('.room-container').forEach(container => {
+        container.addEventListener('click', function(event) {
+          if (event.target.closest('.book-room-btn') || event.target.closest('.favorite-btn')) return;
+          selectRoom(parseInt(this.getAttribute('data-room-id'), 10), this.getAttribute('data-room-id') === '3');
+        });
+      });
+  
+      document.querySelectorAll('.book-room-btn').forEach(button => {
+        button.addEventListener('click', function(event) {
+          event.stopPropagation();
+          const roomId = this.closest('.room-container').getAttribute('data-room-id');
+          selectRoom(parseInt(roomId, 10), roomId === '3');
         });
       });
     });
-  </script>
+  </script> 
 </html>

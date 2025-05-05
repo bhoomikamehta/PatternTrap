@@ -55,13 +55,123 @@
 <div id="footer"></div>
 <script src="scripts/storage.js"></script>
 <script src="scripts/page5.js"></script>
-<script>
+<!--<script>
     fetch("./components/header.html")
       .then((res) => res.text())
       .then((html) => (document.getElementById("header").innerHTML = html));
     fetch("./components/footer.html")
       .then((res) => res.text())
       .then((html) => (document.getElementById("footer").innerHTML = html));
-  </script>
+  </script>-->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        fetch("./components/header.html")
+            .then((res) => res.text())
+            .then((html) => {
+                const element = document.getElementById("header");
+                if (element) element.innerHTML = html;
+                else console.error("Header element not found in page5checkout.html");
+            }).catch(err => console.error("Failed to fetch header:", err));
+
+        fetch("./components/footer.html")
+            .then((res) => res.text())
+            .then((html) => {
+                const element = document.getElementById("footer");
+                if (element) element.innerHTML = html;
+                else console.error("Footer element not found in page5checkout.html");
+            }).catch(err => console.error("Failed to fetch footer:", err));
+
+
+        console.log("Setting up Page 5 logic...");
+
+        const form = document.getElementById("extras-form");
+        const addonsCheckboxes = form?.querySelectorAll("input[type='checkbox']");
+        const detailsElement = document.querySelector("section.fees details");
+        const subtotalTooltipElements = document.querySelectorAll("p.cryptic-total span[title]");
+
+        let detailsOpened = false;
+        let tooltipHovered = false;
+
+        if (form && addonsCheckboxes) {
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                console.log("Form submitted.");
+
+                // Calculate addon score based on unchecked count
+                let uncheckedCount = 0;
+                addonsCheckboxes.forEach(checkbox => { if (!checkbox.checked) uncheckedCount++; });
+
+                let addonsScore = 0;
+                let addonsReason = "";
+                if (uncheckedCount === 3) { // All 3 unchecked
+                    addonsScore = 6; addonsReason = "User unchecked all 3 pre-selected addons (+6 points).";
+                } else if (uncheckedCount >= 1) { // 1 or 2 unchecked
+                    addonsScore = 4; addonsReason = `User unchecked ${uncheckedCount} pre-selected addon(s) (+4 points).`;
+                } else { // None unchecked (all checked)
+                    addonsScore = 0; addonsReason = "User left all pre-selected addons checked (0 points).";
+                }
+
+                logOnboardingAction({
+                    type: "checkout_addons", value: `unchecked_${uncheckedCount}`, score: addonsScore, reason: addonsReason
+                });
+                console.log(`Showing addon banner: score=${addonsScore}, reason=${addonsReason}`);
+                showPointBanner(addonsScore, addonsReason);
+                setTimeout(() => { window.location.href = "page6.html"; }, 2000);
+            });
+        } else {
+            console.error("Page 5 form or addon checkboxes not found.");
+        }
+
+        // 2. Details Toggle Listener
+        if (detailsElement) {
+            detailsElement.addEventListener("toggle", function(event) {
+                // Only score the first time it's opened
+                if (event.target.open && !detailsOpened) {
+                    detailsOpened = true;
+                    let detailsScore = 3;
+                    let detailsReason = "User opened the payment details breakdown (+3 points)."
+                    console.log("Details opened, logging score.");
+
+                    logOnboardingAction({ type: "checkout_details_opened", value: "opened", score: detailsScore, reason: detailsReason });
+
+                    console.log(`Showing details banner: score=${detailsScore}, reason=${detailsReason}`); // Debug log
+                    showPointBanner(detailsScore, detailsReason);
+                }
+            });
+        } else {
+            console.error("Page 5 details element ('section.fees details') not found.");
+        }
+
+        // 3. Tooltip Hover Listener
+        if (subtotalTooltipElements.length > 0) {
+            console.log(`Found ${subtotalTooltipElements.length} subtotal tooltips to monitor.`);
+            subtotalTooltipElements.forEach(tooltip => {
+                tooltip.addEventListener("mouseenter", () => {
+                    if (!tooltipHovered) {
+                        tooltipHovered = true;
+                        let hoverScore = 2;
+                        let hoverReason = "User hovered over a subtotal tooltip (+2 points)."
+                        console.log("Subtotal tooltip hovered, logging score.");
+
+                        logOnboardingAction({
+                            type: "checkout_tooltip_hover",
+                            value: "subtotal_hovered",
+                            score: hoverScore,
+                            reason: hoverReason
+                        });
+                        console.log(`Showing subtotal hover banner: score=${hoverScore}, reason=${hoverReason}`);
+                        showPointBanner(hoverScore, hoverReason);
+                    }
+                });
+            });
+        } else {
+            console.warn("Page 5 subtotal tooltip elements ('p.cryptic-total span[title]') not found.");
+        }
+
+        console.log("Page 5 logic setup complete.");
+
+    });
+</script>
 </body>
 </html>

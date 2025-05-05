@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Results – PatternTrap</title>
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/header-footer.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/style.css">
+  <style>
+    .results-container {
+      max-width: 700px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background: #f8f9fa;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .results-container h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-display {
+      font-size: 2.5rem;
+      color: #28a745; /* Green color for score */
+      margin: 1rem 0;
+      font-weight: bold;
+    }
+
+    .score-breakdown {
+      margin-top: 2rem;
+      text-align: left;
+    }
+
+    .score-breakdown ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+     .score-breakdown li {
+        margin-bottom: 0.5rem;
+        padding: 0.5rem;
+        border-radius: 4px;
+     }
+     .score-breakdown li.positive-score {
+         color: #155724;
+         background-color: #d4edda;
+         border-left: 4px solid #28a745;
+     }
+       .score-breakdown li.neutral-score {
+           color: #383d41;
+           background-color: #e2e3e5;
+           border-left: 4px solid #6c757d;
+    }
+       .center-text-container {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+      .score-value {
+          font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="header"></div>
+
+  <div class="results-container">
+    <h1>🎉 Congratulations! You've completed the PatternTrap journey.</h1>
+    <p>Your final score is:</p>
+    <div class="score-display" id="final-score">0</div>
+    <div class="score-breakdown">
+      <h2>Breakdown of Actions:</h2>
+      <ul id="score-log"></ul>
+    </div>
+  </div>
+  <div class="center-text-container">
+    <span>If you would like to explore all the different types of Deceptive Designs you can check out the exhaustive list <a href="https://www.deceptive.design/types">here</a>.</span>
+  </div>
+  <div id="footer"></div>
+
+  <script src="scripts/storage.js"></script>
+  <script>
+
+    //@param {object} logEntry - The log entry object from storage (contains type, score, value, reason).
+    //@returns {string} - A 3-sentence description of the interaction and dark pattern.
+    
+    function getPatternDescription(logEntry) {
+      const type = logEntry.type;
+      const value = logEntry.value;
+      const score = logEntry.score || 0;
+
+      const fallback = logEntry.reason || `Action Type: ${type}`;
+
+      let pointsText = `(${score > 0 ? '+' : ''}${score} points)`;
+
+      switch (type) {
+          case 'consent': // index.html - Timed, moving consent box
+              if (score > 0) { // Opted out successfully
+                  return `You successfully opted out of the timed consent ${pointsText}. The interface used <strong>Interface Interference</strong> (a moving checkbox) and urgency (<strong>Forced Action</strong> via timer) hoping you'd fail to uncheck it in time.<br>Tip: Always take your time on consent forms and be wary of elements that rush you or impede interaction.`;
+              } else { // Failed to opt out
+                  return `You didn't uncheck the timed consent box ${pointsText}. This interaction combined <strong>Interface Interference</strong> (moving box) and <strong>Forced Action</strong> (timer pressure) to default you into consent.<br>Tip: Carefully read consent options and resist interfaces designed to make opting out difficult or timed.`;
+              }
+
+          case 'cookies': // index.html - Cookie banner
+              if (value === 'manage_preferences') {
+                  return `You chose to manage cookie preferences ${pointsText}. The popup used <strong>Preselection</strong> (checking boxes for you) and <strong>Misdirection</strong> (making 'Accept All' prominent) to guide you away from customizing.<br>Tip: Seeking out 'settings' or 'manage' options empowers you to control your data privacy.`;
+              } else if (value === 'accept_all') {
+                  return `You clicked 'Accept All' cookies ${pointsText}. This accepted default <strong>Preselections</strong>, potentially sharing more data than necessary due to <strong>Misdirection</strong> in the banner's design.<br>Tip: Always look for options like 'Manage Settings' or 'Reject All' to make an active choice.`;
+              } else { // dismiss / ignored_cookies
+                  return `You dismissed or ignored the cookie popup ${pointsText}. This site employed <strong>Trick Wording</strong> or implicit defaults, where inaction equals acceptance of <strong>Preselections</strong>.<br>Tip: Assume inaction might default to consent on manipulative sites and actively look for reject/manage options.`;
+              }
+
+          case 'page2_navigation': // page2.html - Form vs. Browse
+              if (value === 'browse_link') {
+                  // Corrected score check based on previous logic
+                  return `You clicked 'Continue Browse' ${pointsText}, avoiding the detailed form. The page used <strong>Misdirection</strong> (prioritizing 'Next') and <strong>Forced Action</strong> (making optional fields seem required) to gather extra data.<br>Tip: Looking for less obvious navigation paths can often protect your privacy from such <strong>Privacy Zuckering</strong>.`;
+              } else if (score === 5) { // Filled only required fields (adjust score check if needed)
+                  return `You submitted only required info via 'Next' ${pointsText}. Although the page used <strong>Misdirection</strong> ('recommended' fields) to encourage oversharing, you correctly identified and filled only essential fields.<br>Tip: Always differentiate required (*) from optional fields to minimize data collection.`;
+              } else if (score === 0) { // Filled optional fields (trap)
+                  return `You submitted optional information via 'Next' ${pointsText}. This fell for <strong>Privacy Zuckering</strong>, where interfaces trick you into sharing more data than intended, often disguised as 'recommendations'.<br>Tip: Question why optional data is needed before providing it.`;
+              } else { // Other scenarios (e.g., score 7 for missing required)
+                  return `You navigated the booking form ${pointsText}. Forms like this sometimes use <strong>Forced Action</strong> or <strong>Privacy Zuckering</strong> by making optional fields seem necessary.<br>Tip: Always check what's truly required (*) versus optional to avoid oversharing.`;
+              }
+
+
+          case 'hotel_selection': // page3.html - Choosing hotel
+              if (score > 0) { // Chose Standard (best value)
+                  return `You selected the Standard Hotel ${pointsText}, identifying the best value. You correctly ignored <strong>Misdirection</strong> (like misleading badges or discounts) and <strong>Urgency</strong> cues ('Only 1 room left!') used on other options.<br>Tip: Evaluating true final cost and features is key to avoiding choices manipulated by these patterns.`;
+              } else { // Chose Deluxe or Grandview
+                  return `You selected a hotel promoted with dark patterns ${pointsText}. The listing used <strong>Urgency</strong> ('Booked X times!'), <strong>Misdirection</strong> (prominent badges, high fake discounts), and potentially misleading <strong>Social Proof</strong>.<br>Tip: Always compare final prices and beware of high-pressure tactics designed to rush your decision.`;
+              }
+
+          case 'room_type_selection': // page4*.html - Choosing room tier
+              if (score > 0) { // Chose Executive
+                    return `You selected the Executive room ${pointsText}. This page presented pricing using <strong>Hidden Costs / Drip Pricing</strong>, making comparison difficult by separating numerous fees from the base rate.<br>Tip: While you chose the top option, always scrutinize the *total* cost breakdown before booking.`;
+              } else { // Chose lower tier
+                    return `You selected a lower-tier room ${pointsText}. The hotel obscured the true cost via <strong>Hidden Costs / Drip Pricing</strong>, breaking out many ambiguous fees only in the fine print.<br>Tip: Carefully check the *total* price, including all fees and taxes, to avoid surprises with this pattern.`;
+              }
+
+          case 'checkout_addons': // page5checkout.html - Addons form submit
+              if (score === 6) { // Unchecked all 3
+                  return `You unchecked all pre-selected addons ${pointsText}. This successfully avoided <strong>Preselection</strong> (adding items you didn't ask for) and resisted <strong>Confirmshaming</strong> (text making you feel bad for opting out).<br>Tip: Always review default checkout selections carefully.`;
+              } else if (score === 4) { // Unchecked 1 or 2
+                  const uncheckedCount = parseInt(value.split('_')[1] || '1');
+                  return `You unchecked ${uncheckedCount} pre-selected addon(s) ${pointsText}. You partially avoided <strong>Preselection</strong> and resisted <strong>Confirmshaming</strong> by removing unwanted default items.<br>Tip: Thoroughly check default options during checkout.`;
+              } else { // Unchecked 0
+                  return `You left all pre-selected addons checked ${pointsText}. This accepted default additions (<strong>Preselection</strong>) potentially influenced by <strong>Confirmshaming</strong> text ("loss of benefits").<br>Tip: Uncheck anything you didn't explicitly choose to add.`;
+              }
+
+          case 'checkout_details_opened': // page5checkout.html - Expanding details
+              return `You opened the payment details breakdown ${pointsText}. This revealed costs initially obscured by <strong>Hidden Costs / Drip Pricing</strong> within the collapsed section.<br>Tip: Always expand details sections, especially for pricing, to understand the full picture before proceeding.`;
+
+          case 'checkout_tooltip_hover': // page5checkout.html - Hovering subtotal
+                return `You hovered over a subtotal tooltip ${pointsText}. This shows you investigated <strong>Obfuscated Information</strong> within the confusing subtotal calculation (e.g., 'WAF', 'LoveToken').<br>Tip: Question ambiguous pricing and use tooltips or links to decipher unclear charges.`;
+
+          case 'final_checkout': // page6.html - Final step actions
+                const baseReason = logEntry.reason || "";
+                let explanation = `You completed the final checkout ${pointsText}. `;
+                let tips = [];
+                if (baseReason.includes("Optional fields empty: true")) {
+                    explanation += "You correctly left optional billing fields blank, avoiding <strong>Privacy Zuckering</strong> (+3 pts). ";
+                    tips.push("review optional fields");
+                } else if (baseReason.includes("Optional fields empty: false")) {
+                    explanation += "You filled optional billing fields (0 pts); beware <strong>Privacy Zuckering</strong> requests for unneeded data. ";
+                    tips.push("question optional fields");
+                }
+                if (baseReason.includes("Unchecked: 0")) {
+                    explanation += "You accepted pre-checked newsletter/membership due to <strong>Preselection</strong> (0 pts). ";
+                    tips.push("review default checkboxes");
+                } else if (baseReason.includes("Unchecked: ")) {
+                    const uncheckedCount = baseReason.split("Unchecked: ")[1] || 'some';
+                    explanation += `You unchecked ${uncheckedCount} pre-selected option(s), avoiding <strong>Preselection</strong> (+2 pts). `;
+                    tips.push("uncheck unwanted defaults");
+                }
+                if (tips.length > 0) {
+                    explanation += `<br>Tip: Always ${tips.join(' and ')} during checkout.`;
+                }
+                return explanation;
+
+          default:
+              // Fallback for any log types not explicitly handled
+              return `Completed: ${fallback} ${pointsText}.<br>Tip: Standard advice: Read carefully, check defaults, question urgency, and verify total costs to avoid common dark patterns.`;
+      }
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      // Load header and footer
+      fetch("./components/header.html")
+        .then(res => res.text())
+        .then(html => document.getElementById("header").innerHTML = html);
+      fetch("./components/footer.html")
+        .then(res => res.text())
+        .then(html => document.getElementById("footer").innerHTML = html);
+
+      const onboardingData = getOnboardingData();
+      const log = onboardingData.log || [];
+
+      const totalScore = onboardingData.score || 0;
+
+      const logList = document.getElementById("score-log");
+      const finalScoreDisplay = document.getElementById("final-score");
+
+
+      // Clear previous log entries if any
+       logList.innerHTML = '';
+
+
+      // Populate the log breakdown
+      log.forEach(entry => {
+        const li = document.createElement("li");
+         const score = entry.score || 0;
+         const description = getPatternDescription(entry); // Get the detailed text
+         li.innerHTML = description; // Use the detailed text for the list item content
+         // Add class based on score for styling
+          if (score > 0) {
+              li.classList.add('positive-score');
+          } else if (score < 0) {
+              li.classList.add('negative-score');
+          } else {
+              li.classList.add('neutral-score');
+          }
+        logList.appendChild(li);
+      });
+
+      // Display the final score
+      finalScoreDisplay.textContent = totalScore;
+
+    });
+  </script>
+</body>
+</html>

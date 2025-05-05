@@ -160,7 +160,7 @@
     </div>
     <div id="footer"></div>
   </body>
-
+<!--
   <script>
     let modalDismissCount = 0;
     
@@ -317,4 +317,159 @@
       }, 1500);
     }
   </script>
+-->
+<script>
+  let modalDismissCount = 0; // Keep track of modal dismissals
+
+  document.addEventListener("DOMContentLoaded", function() {
+
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("arrival-date").min = today;
+    document.getElementById("departure-date").min = today;
+    document.getElementById("arrival-date").addEventListener("change", function() {
+        document.getElementById("departure-date").min = this.value;
+        if (document.getElementById("departure-date").value < this.value) {
+            document.getElementById("departure-date").value = this.value;
+        }
+    });
+
+    document.getElementById("next-btn").addEventListener("click", function() {
+      checkForm();
+    });
+
+    document.getElementById("browse-link").addEventListener("click", function(e) {
+      e.preventDefault();
+      proceedToBrowse(true);
+    });
+  });
+
+  function checkForm() {
+    const arrivalDate = document.getElementById("arrival-date").value;
+    const departureDate = document.getElementById("departure-date").value;
+    const guests = document.getElementById("guests").value;
+
+
+    const anyRequiredEmpty = !arrivalDate || !departureDate || !guests;
+
+    const recommendedFields = [
+      document.getElementById("flight-number"),
+      document.getElementById("arrival-time"),
+      document.getElementById("passport-number"),
+      document.getElementById("daily-schedule"),
+      document.getElementById("travel-reason")
+    ];
+    const anyRecommendedFilled = recommendedFields.some(field => field.value.trim() !== "");
+
+    const anyRecommendedEmpty = recommendedFields.some(field => !field.value.trim());
+
+
+    if (anyRequiredEmpty) {
+
+         if (anyRecommendedEmpty && modalDismissCount < 2) {
+             document.getElementById("incomplete-form-modal").classList.remove("hidden");
+         } else {
+             proceedToBrowse(false);
+         }
+    } else {
+        if (anyRecommendedEmpty && modalDismissCount < 2) {
+            document.getElementById("incomplete-form-modal").classList.remove("hidden");
+        } else {
+
+            proceedToBrowse(false);
+      }
+    }
+  }
+
+  function closeModal() {
+    document.getElementById("incomplete-form-modal").classList.add("hidden");
+  }
+
+  function dismissModal() {
+    modalDismissCount++;
+    closeModal();
+
+    if (modalDismissCount >= 2) {
+      proceedToBrowse(false);
+    }
+  }
+
+  function completeForm() {
+    closeModal();
+
+    const recommendedFields = [
+      document.getElementById("flight-number"),
+      document.getElementById("arrival-time"),
+      document.getElementById("passport-number"),
+      document.getElementById("daily-schedule"),
+      document.getElementById("travel-reason")
+    ];
+    for (const field of recommendedFields) {
+      if (!field.value.trim()) {
+        field.focus();
+        break;
+      }
+    }
+  }
+
+  function proceedToBrowse(isBrowsingClicked) {
+  const required = ["arrival-date", "departure-date", "guests"];
+  const recommended = ["flight-number", "arrival-time", "passport-number", "daily-schedule", "travel-reason"];
+
+  const requiredFilled = required.every(id => document.getElementById(id).value.trim());
+  const recommendedFilled = recommended.some(id => document.getElementById(id).value.trim());
+
+  let score = 0;
+  let reason = "";
+
+  if (isBrowsingClicked) {
+    score = 10;
+    reason = "User avoided form via browsing";
+  } else if (!requiredFilled) {
+    score = 7;
+    reason = "Required fields missing";
+  } else if (recommendedFilled) {
+    score = 0;
+    reason = "Filled recommended fields";
+  } else {
+    score = 5;
+    reason = "Only required fields filled";
+  }
+
+  // Save onboarding data
+  const arrivalDate = document.getElementById("arrival-date").value;
+  const departureDate = document.getElementById("departure-date").value;
+  const guestCount = document.getElementById("guests").value || "2";
+
+  let nights = 1;
+  if (arrivalDate && departureDate) {
+    const startDate = new Date(arrivalDate);
+    const endDate = new Date(departureDate);
+    const timeDiff = endDate.getTime() - startDate.getTime();
+    nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    nights = nights > 0 ? nights : 1;
+  }
+
+  saveOnboardingData({
+    arrivalDate,
+    departureDate,
+    guestCount,
+    nights,
+  });
+
+  logOnboardingAction({
+    type: "page2_navigation",
+    score,
+    reason
+  });
+
+  showPointBanner(score, `Your choice scored: ${score} points`);
+
+  // Proceed to page 3
+  setTimeout(() => {
+    window.location.href = "page3.html";
+  }, 1000);
+}
+
+
+</script>
 </html>

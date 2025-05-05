@@ -131,92 +131,88 @@
     </div>
     <div id="footer"></div>
   </body>
-
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const consentBox = document.getElementById("consent-box");
+      const contentBoxSpan = consentBox.querySelector("span");
+      let countdown = 10;
+    
       consentBox.addEventListener("mouseenter", () => {
         const maxX = window.innerWidth - consentBox.offsetWidth;
         const maxY = window.innerHeight - consentBox.offsetHeight;
         const newX = Math.floor(Math.random() * maxX);
         const newY = Math.floor(Math.random() * maxY);
-
+    
         consentBox.style.left = `${newX}px`;
         consentBox.style.top = `${newY}px`;
       });
-      const contentBoxSpan = consentBox.querySelector("span");
-      let countdown = 10;
+    
       const interval = setInterval(() => {
         countdown--;
         contentBoxSpan.textContent = `Submitting in ${countdown}`;
         if (countdown <= 0) {
           clearInterval(interval);
-          if (consentBox.querySelector("input").checked) {
-            logConsent(true);
-          } else {
-            logConsent(false);
-          }
+    
+          const consented = consentBox.querySelector("input").checked;
+          const score = consented ? 0 : 2;
+    
+          logOnboardingAction({
+            type: "consent",
+            value: consented ? "opt_in" : "opt_out",
+            score: score,
+            reason: consented ? "Did not uncheck in time" : "Unchecked in time"
+          });
+    
+          showPointBanner(score, consented ? "No points gained" : "Good Job! +2 points");
           consentBox.style.display = "none";
         }
       }, 1000);
     });
-
-    function logConsent(consented) {
-      let value = consented ? "opt_in" : "opt_out";
-      let score = consented ? -1 : 1;
-      let newLogItem = {
-        type: "consent",
-        value: value,
-        score: score,
-        reason: consented
-          ? "User failed to opt out of data collection"
-          : "User opted out of data collection",
-      };
-      logOnboardingAction(newLogItem);
-      showPointBanner(score);
-    }
-
+    
+    // Remove or define if required elsewhere:
+    // function logConsent(consented) { /* not defined, remove or implement */ }
+    
     function bookNow() {
       nextStep();
     }
-
+    
     function nextStep() {
-      // const newName = document.getElementById("name").value;
-      // saveOnboardingData({ ...onboardingData, name: newName });
-      if (document.getElementById("cookies-modal").style.display != "none") {
-        let score = -1;
-        let newLogItem = {
+      const cookiesModal = document.getElementById("cookies-modal");
+      if (cookiesModal.style.display !== "none") {
+        let score = 0;
+    
+        logOnboardingAction({
           type: "cookies",
           value: "ignored_cookies",
           score: score,
           reason: "User continued before acknowledging cookies banner",
-        };
-        logOnboardingAction(newLogItem);
-        showPointBanner(score);
+        });
+    
+        showPointBanner(score, "No points gained. You ignored the cookies popup.");
+    
         setTimeout(() => {
           window.location.href = "page2.html";
-        }, 1000);
+        }, 500);
         return;
       }
       window.location.href = "page2.html";
     }
-
-    function selectCookies(value, score) {
-      let prevLog = onboardingData.log || [];
-      let reason =
-        value == "manage_preferences"
-          ? "User attemnpted to manage cookie preferences"
-          : value == "accept_all"
-            ? "User accepted all cookies"
-            : "User dismissed cookies popup without saving preferences";
-      let newLogItem = {
+    
+    function selectCookies(value) {
+      let calculatedScore = (value === "manage_preferences") ? 5 : 0;
+    
+      logOnboardingAction({
         type: "cookies",
         value: value,
-        score: score,
-        reason: reason,
-      };
-      logOnboardingAction(newLogItem);
-      showPointBanner(score);
+        score: calculatedScore,
+        reason: (value === "manage_preferences") ? "User managed preferences" : "Accepted or dismissed cookies popup"
+      });
+    
+      showPointBanner(
+        calculatedScore,
+        (calculatedScore > 0) ? "Good Job! +5 points" : "No points gained"
+      );
+    
       document.getElementById("cookies-modal").style.display = "none";
     }
   </script>
